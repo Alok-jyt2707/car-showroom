@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RaVerse Car Showroom</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family:'Poppins', sans-serif; background:#f9fafb; color:#333; line-height:1.5; }
+
+  /* Navbar */
+  nav { display:flex; justify-content:space-between; align-items:center; padding:1rem; background:#fff; box-shadow:0 2px 5px rgba(0,0,0,0.1); position:sticky; top:0; z-index:100; flex-wrap:wrap; gap:0.5rem; }
+  .logo img { max-height:40px; width:auto; }
+  .nav-links { display:flex; list-style:none; gap:1.5rem; }
+  .nav-links li a { text-decoration:none; color:#333; font-weight:500; transition:0.3s; }
+  .nav-links li a:hover { color:#2563eb; }
+  .nav-right { display:flex; align-items:center; gap:0.75rem; flex-shrink:0; }
+  .nav-btn { background:#2563eb; color:#fff; border:none; padding:0.5rem 1rem; border-radius:8px; cursor:pointer; transition:0.3s; }
+  .nav-btn:hover { background:#1d4ed8; }
+
+  /* Search bar */
+  .search-bar { position:relative; width:200px; }
+  .search-bar input { width:100%; padding:0.4rem 2rem 0.4rem 0.8rem; border:1px solid #ddd; border-radius:20px; background:#f3f4f6; transition:0.3s; }
+  .search-bar input:focus { outline:none; border-color:#2563eb; background:#fff; box-shadow:0 0 5px rgba(37,99,235,0.3); }
+  .search-bar button { position:absolute; right:5px; top:50%; transform:translateY(-50%); background:none; border:none; font-size:1rem; color:#555; cursor:pointer; }
+
+  /* Hamburger */
+  .hamburger { display:none; font-size:1.8rem; cursor:pointer; background:none; border:none; }
+  .hamburger.active::before { content:"✖"; }
+  .hamburger::before { content:"☰"; }
+
+  /* Mobile Menu */
+  .mobile-menu { position:absolute; top:70px; left:0; width:100%; background:#fff; flex-direction:column; gap:1rem; padding:0 2rem; max-height:0; overflow:hidden; transition:max-height 0.4s ease, padding 0.4s ease; box-shadow:0 5px 10px rgba(0,0,0,0.1); }
+  .mobile-menu.active { max-height:350px; padding:1rem 2rem; display:flex; }
+  .mobile-menu a { text-decoration:none; color:#333; font-weight:500; padding:0.5rem; transition:0.3s; }
+  .mobile-menu a:hover { color:#2563eb; }
+
+  /* Hero */
+  .hero { position:relative; text-align:center; padding:5rem 1rem; background: url('posters/herobackground.jpg') center/cover no-repeat; color:#fff; }
+  .hero h1 { font-size:3rem; font-weight:700; line-height:1.2; margin-bottom:0.5rem; }
+  .hero h1 .typing { border-right: 3px solid #fff; white-space:nowrap; overflow:hidden; display:inline-block; }
+  .hero .to { display:block; color:#2563eb; font-size:1rem; margin: bottom 0.2em;rem; opacity:0.8;font-weight: bold; }
+  .hero .main-title { font-size:2rem; font-weight:600; margin-bottom:2rem; }
+.hero .main-title .highlight {
+  color: #acd6ff;
+  animation: neonGlow 1.5s infinite alternate;
+}
+
+/* Glowing animation for Vs */
+@keyframes neonGlow {
+  0% { text-shadow: 0 0 5px #1972f8, 0 0 10px #1972f8, 0 0 20px #1972f8; }
+  50% { text-shadow: 0 0 10px #1972f8, 0 0 20px #1972f8, 0 0 30px #1972f8; }
+  100% { text-shadow: 0 0 5px #1972f8, 0 0 10px #1972f8, 0 0 20px #1972f8; }
+}
+
+  .hero p { font-size:1.3rem; margin-bottom:2rem; color:#f0f0f0; }
+  .hero .btn { padding:0.8rem 2rem; font-weight:bold; font-size:1rem; border-radius:8px; margin:0 0.5rem; }
+  .btn-primary { background:#2563eb; color:#fff; border:none; }
+  .btn-primary:hover { background:#1d4ed8; }
+  .btn-dark { background:#111; color:#fff; border:none; }
+  .btn-dark:hover { background:#79c3ee; }
+
+  /* Poster section */
+.poster-section {
+  position: relative;
+  max-width: 1100px;
+  margin: 2rem auto;
+  overflow: hidden;
+  border-radius: 0px;
+}
+
+.poster-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/7;
+}
+
+.poster-slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: none; /* Show only current slide via JS */
+}
+
+.poster-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 0px;
+}
+
+.explore-btn {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.6rem 1.5rem;
+  background: rgba(128,128,128,0.7);
+  color: #fff;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background 0.3s;
+}
+
+.explore-btn:hover {
+  background: rgba(37,99,235,0.8);
+}
+
+/* Arrow Buttons */
+.poster-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: rgba(0,0,0,0.5);
+  cursor: pointer;
+  z-index: 3;
+  transition: color 0.3s;
+}
+
+.poster-nav:hover {
+  color: rgba(0,0,0,0.8);
+}
+
+.poster-prev { left: 10px; }
+.poster-next { right: 10px; }
+
+/* Fading overlays */
+.fade-left,
+.fade-right {
+  position: absolute;
+  top: 0;
+  width: 60px;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.fade-left {
+  left: 0;
+  background: linear-gradient(to right, #fff 0%, rgba(255,255,255,0) 100%);
+}
+
+.fade-right {
+  right: 0;
+  background: linear-gradient(to left, #fff 0%, rgba(255,255,255,0) 100%);
+}
+
+
+
+  /* Segments */
+  section { padding:3rem 1.5rem; text-align:center; }
+  h2 { font-size:2rem; margin-bottom:2rem; }
+  .segments { display:flex; flex-wrap:wrap; justify-content:center; gap:1rem; }
+  .segments a { flex:1 1 150px; max-width:180px; padding:1rem; border:2px solid #ddd; border-radius:12px; background:#fff; text-decoration:none; color:inherit; transition:0.3s; display:flex; flex-direction:column; align-items:center; }
+  .segments .img-wrapper { width:100%; display:flex; justify-content:center; margin-bottom:0.5rem; }
+  .segments img { width:100px; height:100px; object-fit:contain; }
+  .segment-name { font-weight:bold; margin-bottom:0.3rem; }
+  .segment-subtext { font-size:0.9rem; color:#555; }
+  .segments a:hover { transform:scale(1.05); border-color:#2563eb; background:#e0f2fe; }
+  .segments a.luxury:hover { background:linear-gradient(to right, #facc15, #ca8a04); color:#fff; border:none; box-shadow:0 0 15px rgba(234,179,8,0.7); }
+  .segments a.electric:hover { background:linear-gradient(to right, #22c55e, #15803d); color:#fff; border:none; box-shadow:0 0 15px rgba(34,197,94,0.7); }
+  .segments a.performance:hover { background:linear-gradient(to right, #ef4444, #b91c1c); color:#fff; border:none; box-shadow:0 0 15px rgba(239,68,68,0.7); }
+
+  /* Showrooms */
+/* Showroom Section */
+#showroom {
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+#showroom h2 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+}
+
+#showroom .cars-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+}
+
+#showroom .car-card {
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+#showroom .car-card:hover {
+  transform: scale(1.08);
+}
+
+#showroom .car-card .logo-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin: auto;
+  border: 2px solid #87ceeb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.3s ease, box-shadow 0.3s ease;
+}
+
+#showroom .car-card .logo-circle img {
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+}
+
+#showroom .car-card .logo-circle:hover {
+  box-shadow: 0 0 20px 8px rgba(135, 206, 235, 0.6);
+}
+
+#showroom .brand-name {
+  margin-top: 0.5rem;
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  #showroom .logo-circle {
+    width: 90px;
+    height: 90px;
+  }
+
+  #showroom .brand-name {
+    font-size: 0.9rem;
+  }
+
+  #showroom .cars-grid {
+    gap: 1.2rem;
+  }
+}
+
+
+
+
+  /* Comparison */
+  .comparison h2 { margin-bottom:1.5rem; }
+  .choco-btn { display:inline-block; background:linear-gradient(145deg, #b0b0b0, #8c8c8c); color:#fff; font-size:1.3rem; font-weight:bold; padding:1.2rem 3.5rem; border:none; border-radius:12px; box-shadow:0 6px 0 #6e6e6e, 0 8px 20px rgba(0,0,0,0.3); cursor:pointer; transition:all 0.3s ease; }
+  .choco-btn:hover { background:linear-gradient(145deg, #d1d1d1, #9c9c9c); box-shadow:0 4px 0 #5a5a5a, 0 6px 15px rgba(0,0,0,0.4); transform:translateY(2px); }
+
+  /* Footer */
+  footer { background:#111; color:#aaa; padding:2rem 1.5rem; margin-top:3rem; }
+  footer .container { max-width:1100px; margin:auto; display:grid; gap:2rem; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); }
+  footer h3 { color:#fff; margin-bottom:1rem; }
+  footer a { color:#aaa; text-decoration:none; transition:0.3s; }
+  footer a:hover { color:#fff; }
+  footer .bottom { text-align:center; margin-top:2rem; font-size:0.9rem; color:#666; }
+
+  /* Animations */
+  @keyframes typing { from { width:0 } to { width:100% } }
+  @keyframes glow { 0%,100%{ text-shadow:0 0 5px #2563eb; } 50%{ text-shadow:0 0 20px #2563eb; } }
+
+  /* Responsive */
+  @media(max-width:768px){
+    .nav-links { display:none; }
+    .hamburger { display:block; }
+    .nav-right { width:100%; justify-content:center; flex-wrap:wrap; }
+    .search-bar { flex:1; min-width:140px; max-width:none; }
+    .nav-btn { flex:1; text-align:center; }
+    .segments a { flex:1 1 45%; max-width:none; }
+    .poster-carousel { margin:1.5rem 0; }
+    .hero h1 { font-size:2rem; }
+    .hero h1 .typing { font-size:2rem; }
+    .hero .main-title { font-size:1.3rem; }
+    .hero p { font-size:1rem; }
+    .hero .btn { font-size:0.9rem; padding:0.6rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav>
+  <div class="logo"><img src="C:\Users\aloky\OneDrive\Desktop\zip_file_showroom\WEBTECHminiproject\logos\20250927_145800.png" alt="RaVerse Logo"></div>
+  <ul class="nav-links">
+    <li><a href="#">Home</a></li>
+    <li><a href="#segments">Segments</a></li>
+    <li><a href="#showroom">Showrooms</a></li>
+    <li><a href="#">Comparison</a></li>
+    <li><a href="#">services</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="search-bar">
+      <input type="text" placeholder="Search cars...">
+      <button>🔍</button>
+    </div>
+    <button class="nav-btn">Talk to Expert</button>
+  </div>
+  <button class="hamburger" id="hamburger"></button>
+</nav>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#">Home</a>
+  <a href="#segments">Segments</a>
+  <a href="#showroom">Showrooms</a>
+  <a href="#">Comparison</a>
+  <a href="#">Contact</a>
+</div>
+
+<!-- Hero -->
+<section class="hero">
+  <h1><span class="typing" id="typing">WELCOME!</span></h1>
+  <span class="to">to</span>
+  <h2 class="main-title">Uni<span class="highlight">V</span>erse Of Ra<span class="highlight">V</span>ing Beast</h2>
+  <p>Discover the finest cars from around the world</p>
+  <button class="btn btn-primary" onclick="window.scrollBy({ top: 300, behavior: 'smooth' });">Explore cars</button>
+  <button class="btn btn-dark"><a href="C:\Users\aloky\OneDrive\Desktop\zip_file_showroom\WEBTECHminiproject\enquire.html">Enquire Now</button>
+</section>
+
+<!-- Poster Section -->
+<!-- Poster Section -->
+<section class="poster-section">
+  <div class="poster-wrapper">
+    <div class="poster-slide">
+      <img src="posters/bmwm4.png" alt="Car Poster 1">
+      <a href="C:\Users\aloky\OneDrive\Desktop\zip_file_showroom\WEBTECHminiproject\bmw.html" class="explore-btn">Explore</a>
+    </div>
+    <!-- Arrow Buttons -->
+    <button class="poster-nav poster-prev">&#10094;</button>
+    <button class="poster-nav poster-next">&#10095;</button>
+
+    <!-- Fading Overlays -->
+    <div class="fade-left"></div>
+    <div class="fade-right"></div>
+  </div>
+</section>
+
+
+
+
+<!-- Segments -->
+<section id="segments">
+  <h2>Segments</h2>
+  <div class="segments">
+    <a href="#" class="luxury"><div class="img-wrapper"><img src="logos/premiumcarslogo.png" alt="Luxury"></div><div class="segment-name">Luxury cars</div><div class="segment-subtext">Premium cars for elite</div></a>
+    <a href="#"><div class="img-wrapper"><img src="logos/supercarlogo.png" alt="Supercars"></div><div class="segment-name">Supercars</div><div class="segment-subtext">High-speed performance</div></a>
+    <a href="#" class="electric"><div class="img-wrapper"><img src="logos/electriccarlogo.png" alt="Electric"></div><div class="segment-name">EV cars</div><div class="segment-subtext">Eco-friendly innovation</div></a>
+    <a href="#"><div class="img-wrapper"><img src="logos/suvslogo.png" alt="SUVs"></div><div class="segment-name">SUVs</div><div class="segment-subtext">Comfort & space</div></a>
+    <a href="#"><div class="img-wrapper"><img src="logos/budgercarloogo.png" alt="Budget"></div><div class="segment-name">Budget cars</div><div class="segment-subtext">Affordable rides</div></a>
+    <a href="#" class="performance"><div class="img-wrapper"><img src="logos/performancelogo.png"alt="Performance"></div><div class="segment-name">Performance cars</div><div class="segment-subtext">High-octane thrill</div></a>
+  </div>
+</section>
+
+<!-- Showrooms -->
+<section id="showroom">
+  <h2>Showroom</h2>
+  <div class="cars-grid">
+    <div class="car-card" onclick="window.location.href='#'">
+      <div class="logo-circle"><img src="logos/merclogo.png" alt="Mercedes"></div>
+      <div class="brand-name">Mercedes</div>
+    </div>
+
+    <div class="car-card" onclick="window.location.href='#'">
+      <div class="logo-circle"><img src="logos/lambologo.png" alt="Lamborghini"></div>
+      <div class="brand-name">Lamborghini</div>
+    </div>
+
+    <div class="car-card" onclick="window.location.href='#'">
+      <div class="logo-circle"><img src="logos/ferrarilogo.png" alt="Ferrari"></div>
+      <div class="brand-name">Ferrari</div>
+    </div>
+
+    <div class="car-card" onclick="window.location.href='#'">
+      <div class="logo-circle"><img src="logos/astonlogo.png" alt="Aston Martin"></div>
+      <div class="brand-name">Aston Martin</div>
+    </div>
+
+    <div class="car-card" onclick="window.location.href='#'">
+      <div class="logo-circle"><img src="logos/porschelogo.png" alt="Porsche"></div>
+      <div class="brand-name">Porsche</div>
+    </div>
+
+    <div class="car-card" onclick="window.location.href='#'">
+      <div class="logo-circle"><img src="logos/rollslogo.png" alt="Rolls Royce"></div>
+      <div class="brand-name">Rolls Royce</div>
+    </div>
+
+    <div class="car-card" onclick="window.location.href='#'">
+      <div class="logo-circle"><img src="logos/jlrlogo.png" alt="JLR"></div>
+      <div class="brand-name">JLR</div>
+    </div>
+
+    <div class="car-card" onclick="window.location.href='#'">
+      <div class="logo-circle"><img src="logos/mahindralogo.jpg" alt="Mahindra"></div>
+      <div class="brand-name">Mahindra</div>
+    </div>
+
+    <div class="car-card" onclick="window.location.href='#'">
+      <div class="logo-circle"><img src="logos/bmwlogo.png" alt="BMW"></div>
+      <div class="brand-name">BMW</div>
+    </div>
+
+    <div class="car-card" onclick="window.location.href='#'">
+      <div class="logo-circle"><img src="logos/audilogo.png" alt="Audi"></div>
+      <div class="brand-name">Audi</div>
+    </div>
+
+    <div class="car-card" onclick="window.location.href='#'">
+      <div class="logo-circle"><img src="logos/comingsoon2.png" alt="xyz"></div>
+      <div class="brand-name">coming soon</div>
+    </div>
+
+    <div class="car-card" onclick="window.location.href='#'">
+      <div class="logo-circle"><img src="logos/comingsoon2.png" alt="xyz"></div>
+      <div class="brand-name">coming soon</div>
+    </div>
+
+    <div class="car-card" onclick="window.location.href='#'">
+      <div class="logo-circle"><img src="logos/comingsoon2.png" alt="xyz"></div>
+      <div class="brand-name">coming soon</div>
+    </div>
+
+    <div class="car-card" onclick="window.location.href='#'">
+      <div class="logo-circle"><img src="logos/comingsoon2.png" alt="xyz"></div>
+      <div class="brand-name">coming soon</div>
+    </div>
+
+    <div class="car-card" onclick="window.location.href='#'">
+      <div class="logo-circle"><img src="logos/comingsoon2.png" alt="xyz"></div>
+      <div class="brand-name">coming soon</div>
+    </div>
+
+    <div class="car-card" onclick="window.location.href='#'">
+      <div class="logo-circle"><img src="logos/comingsoon2.png" alt="xyz"></div>
+      <div class="brand-name">coming soon</div>
+    </div>
+
+    <div class="car-card" onclick="window.location.href='#'">
+      <div class="logo-circle"><img src="logos/comingsoon2.png" alt="xyz"></div>
+      <div class="brand-name">coming soon</div>
+    </div>
+
+    <div class="car-card" onclick="window.location.href='#'">
+      <div class="logo-circle"><img src="logos/comingsoon2.png" alt="xyz"></div>
+      <div class="brand-name">coming soon</div>
+    </div>
+
+    <div class="car-card" onclick="window.location.href='#'">
+      <div class="logo-circle"><img src="logos/comingsoon2.png" alt="xyz"></div>
+      <div class="brand-name">coming soon</div>
+    </div>
+
+    <div class="car-card" onclick="window.location.href='#'">
+      <div class="logo-circle"><img src="logos/comingsoon2.png" alt="zyz"></div>
+      <div class="brand-name">coming soon</div>
+    </div>
+
+
+  </div>
+</section>
+
+
+
+<!-- Comparison -->
+<section class="comparison">
+  <h2>Compare Cars Side by Side</h2>
+  <button class="choco-btn">Start Comparison</button>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <div>
+      <h3>RaVerse</h3>
+      <p>Your ultimate car showroom experience.</p>
+    </div>
+    <div>
+      <h3>Quick Links</h3>
+      <p><a href="#">Home</a></p>
+      <p><a href="#">Segments</a></p>
+      <p><a href="#">Showrooms</a></p>
+      <p><a href="#">Comparison</a></p>
+    </div>
+    <div>
+      <h3>Contact</h3>
+      <p>Email: support@raverse.com</p>
+      <p>Phone: +91 98765 43210</p>
+      <p><a href="#">Twitter</a> | <a href="#">LinkedIn</a></p>
+    </div>
+  </div>
+  <div class="bottom">© 2025 RaVerse. All rights reserved.</div>
+</footer>
+
+<script>
+  // Mobile menu toggle
+  const hamburger = document.getElementById("hamburger");
+  const mobileMenu = document.getElementById("mobileMenu");
+  hamburger.addEventListener("click", ()=>{
+    mobileMenu.classList.toggle("active");
+    hamburger.classList.toggle("active");
+  });
+
+  // Poster Carousel
+// Poster Slider
+const slides = document.querySelectorAll(".poster-slide");
+const prevBtn = document.querySelector(".poster-prev");
+const nextBtn = document.querySelector(".poster-next");
+let currentSlide = 0;
+
+function showSlide(index) {
+  slides.forEach((slide, i) => {
+    slide.style.display = i === index ? "block" : "none";
+  });
+}
+
+prevBtn.addEventListener("click", () => {
+  currentSlide = currentSlide - 1 < 0 ? slides.length - 1 : currentSlide - 1;
+  showSlide(currentSlide);
+});
+
+nextBtn.addEventListener("click", () => {
+  currentSlide = currentSlide + 1 >= slides.length ? 0 : currentSlide + 1;
+  showSlide(currentSlide);
+});
+
+// Auto slide every 5s
+setInterval(() => {
+  currentSlide = (currentSlide + 1) % slides.length;
+  showSlide(currentSlide);
+}, 5000);
+
+// Initialize
+showSlide(currentSlide);
+
+
+
+  // Typing effect
+  const typingText = document.getElementById("typing").textContent;
+  const typingElem = document.getElementById("typing");
+  typingElem.textContent = "";
+  let i=0;
+  function typeWriter(){
+    if(i<typingText.length){
+      typingElem.textContent+=typingText.charAt(i);
+      i++;
+      setTimeout(typeWriter,150);
+    }
+  }
+  typeWriter();
+
+// Smooth scroll to showroom when navbar link is clicked
+document.addEventListener("DOMContentLoaded", function() {
+  const showroomLink = document.querySelector('nav a[href="#showroom"]'); // Navbar link
+  const showroomSection = document.getElementById('showroom'); // Showroom section with id="showroom"
+
+  if (showroomLink && showroomSection) {
+    showroomLink.addEventListener('click', function(e) {
+      e.preventDefault(); // Prevent default jump
+      showroomSection.scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+});
+
+
+
+
+</script>
+</body>
+</html>
